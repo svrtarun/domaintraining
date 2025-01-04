@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# Simple script to load, unload, and check device drivers
+
+# Function to load a driver
+load_driver() {
+    if lsmod | grep "$1" &> /dev/null; then
+        echo "Driver '$1' is already loaded."
+    else
+        echo "Loading driver '$1'..."
+        sudo modprobe "$1"
+        if [ $? -eq 0 ]; then
+            echo "Driver '$1' loaded successfully."
+        else
+            echo "Failed to load driver '$1'."
+        fi
+    fi
+}
+
+# Function to unload a driver
+unload_driver() {
+    if lsmod | grep "$1" &> /dev/null; then
+        echo "Unloading driver '$1'..."
+        sudo modprobe -r "$1"
+        if [ $? -eq 0 ]; then
+            echo "Driver '$1' unloaded successfully."
+        else
+            echo "Failed to unload driver '$1'."
+        fi
+    else
+        echo "Driver '$1' is not loaded."
+    fi
+}
+
+# Function to check if a driver is loaded
+check_driver() {
+    if lsmod | grep "$1" &> /dev/null; then
+        echo "Driver '$1' is loaded."
+    else
+        echo "Driver '$1' is not loaded."
+    fi
+}
+
+# Function to list all currently loaded drivers
+list_loaded_drivers() {
+    echo "Currently loaded drivers:"
+    lsmod
+}
+
+# Main menu
+echo "Linux Device Driver Management"
+echo "1. Load a driver"
+echo "2. Unload a driver"
+echo "3. Check if a driver is loaded"
+echo "4. List all loaded drivers"
+echo "5. Exit"
+echo -n "Enter your choice: "
+read choice
+
+case "$choice" in
+    1)
+        echo -n "Enter the driver name to load: "
+        read driver_name
+        load_driver "$driver_name"
+        ;;
+    2)
+        echo -n "Enter the driver name to unload: "
+        read driver_name
+        unload_driver "$driver_name"
+        ;;
+    3)
+        echo -n "Enter the driver name to check: "
+        read driver_name
+        check_driver "$driver_name"
+        ;;
+    4)
+        list_loaded_drivers
+        ;;
+    5)
+        echo "Exiting..."
+        exit 0
+        ;;
+    *)
+        echo "Invalid choice, please try again."
+        ;;
+esac
+
